@@ -1,6 +1,7 @@
 # Laxya Agarwal-IITB-Assignment
-For running RestAPI webapp
-simply do 
+
+For running RestAPI webapp 
+simply do  https://laxyaattention.onrender.com 
 # python app.py 
 This project builds an Attention-OCR Model by generating synthetic data and training it on aocr.
 Please check out my saved model it is givig 99% accuracy ,
