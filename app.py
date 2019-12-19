@@ -1,6 +1,6 @@
 import os
 import numpy as np
-import glob,cv2
+import glob
 import sys,argparse
 import tensorflow as tf
 from tensorflow.python.framework import graph_util
@@ -36,7 +36,7 @@ def getImage(path):
     with open(path, 'rb') as img_file:
         img = img_file.read()
     return img
-graph = load_graph('./exported-model/frozen_graph.pb')
+graph = load_graph('frozen_graph.pb')
 @app.route('/',methods=['POST','GET'])
 def demo():
     if request.method == 'POST':
@@ -50,7 +50,7 @@ def demo():
         probabilities = graph.get_tensor_by_name("probability:0")
         y = graph.get_tensor_by_name("prediction:0")
 
-        with tf.Session(graph=graph) as sess:
+        with tf.Session(graph=graph,config=tf.ConfigProto(allow_soft_placement=True,  log_device_placement=True)) as sess:
             (y_out,probs_output) = sess.run([y,probabilities],feed_dict={x:[image]})
 
 
