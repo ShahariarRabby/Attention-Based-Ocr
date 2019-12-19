@@ -1,9 +1,0 @@
-tensorflow==1.15.0
-pillow
-numpy
-matplotlib
-Flask
-pyyaml==5.1
-Werkzeug==0.15.5
-gunicorn==19.9.0
-setuptools>=32.1.0
