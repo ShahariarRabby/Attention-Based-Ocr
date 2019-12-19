@@ -1,0 +1,131 @@
+#Name: Laxya AGarwal
+
+pip3 install tensorflow=1.15.0
+pip3 install opencv-python
+pip3 install Cython
+pip3 install opencv-python
+pip3 install pillow
+pip3 install numpy
+pip3 install matplotlib
+pip3 install fontTools
+pip3 install tenacity
+pip3 install easyDict
+pip3 install flask
+pip3 install pyyaml==5.1
+pip3 install werkzeug
+
+
+#Instructions for Generating Synthetic Data:
+
+#- open text-renderer-master from the cloned directory, make sure it has more than one image in data/bg directory, if not then they are provided in Background_Images_and_Fonts directory in repo, Copy these photos to text-renderer-master/data/bg. 
+
+#- If merged.txt is not present in data/corpus, then execute 'paste -d "\n" company.txt email.txt name.txt phone_no.txt > merged.txt' ,and copy it to text-renderer-master/data/corpus , 30 types of fonts in data/font/eng, names of these fonts are mentioned in data/fonts_list/eng.txt
+#- Execute the following command from text-renderer-master directory
+
+python3 main.py --num_img 35000 --img_height 32 --img_width 256 --length 1 --clip_max_chars 40
+
+#- Above function will generate 35K image file and those can be found in text-renderer-master/output/default, also you may find a tmp_labels.txt in the same folder, Copy default folder to a new directory at root (alongside the text-renderer directory) named 'datasets'
+#- Rename default -> synthetic, and copy 'tmp_labels.txt' from 'synthetic' folder to 'datasets' folder and rename it to 'synthetic_annotations.txt'
+
+
+
+
+
+
+#- Copy 'attention-ocr-master' directory from the github repo to root , Note.: Here /attention-ocr-master/aocr/util/data_gen.py is been modified by extending the character map from only upper case A-Z to upper and lower case A-Z,a-z , as well as symbols such as '! , . @ - '. Also __main__.py has been modified according to the requirements of the assignment. 
+
+
+
+#- Move into 'attention-ocr-master' and Execute following commands to setup aocr in your environment.
+
+# python3 setup.py build
+# python3 setup.py install
+
+
+
+
+
+#- Execute the following command by going to the root folder, i.e., Move out of the current folder(attention-ocr-master)
+
+aocr dataset ./datasets/annotations-syn-training.txt ./datasets/training.tfrecords
+aocr dataset ./datasets/annotations-syn-validating.txt ./datasets/validating.tfrecords
+
+#- After execution of the above command, we may find 2 tfrecords file, one for training and other for validating.
+
+
+
+
+#- Now, we've reached to the training stage. Execute any of the following commands to train the data accordingly. These commands differ from different learning rates. Also we have to specify dimensions of our images, i.e., Max-Width 960, Max-height 48 and Max-Prediction-length is 23
+
+
+
+#- This command is with Learning Rate 0.4 and it should generate new checkpoints everytime its executed.
+  
+aocr train ./datasets/training.tfrecords   --max-width 960 --max-height 48 --max-prediction 23 --initial-learning-rate 0.4 --steps-per-checkpoint 50
+
+
+
+
+#- This command is with Learning Rate 0.5 and it should generate new checkpoints everytime its executed.
+
+aocr train ./datasets/training.tfrecords -- --max-width 960 --max-height 48 --max-prediction 23 --initial-learning-rate 0.5 --steps-per-checkpoint 50
+
+
+
+
+#- This command is with Learning Rate 0.1 and it should generate new checkpoints everytime its executed.
+
+aocr train ./datasets/training.tfrecords  --max-width 960 --max-height 48 --max-prediction 23 --initial-learning-rate 0.1 --steps-per-checkpoint 50
+
+
+
+
+
+#- We can use tensorboard to visualize our training progress by executing the following command.
+
+tensorboard --logdir=./checkpoints
+
+#- Output will have a localhost link which can be opened in any browser of choice to view the Training Summary.
+
+
+
+
+#- I have executed the last command where learning rate is 0.2, because while I ran each and every command Learning Rate plays an important role while training your model. Learning rate should not be too low as it might take a long time to converge, as well it should be too high as it may converge to some local Minima instead of reaching a Global Minima. I have used the command with Learning Rate 0.2 and ran it untill ~5000 iterations, make sure the loss becomes below 0.1
+
+
+
+
+#- After training our model checkpoints can be found inside a newly generated folder './checkpoints', we can get our recent checkpoints in terms of '*.ckpt' format.
+
+
+
+
+#- Now, it's time to export our model. For exporting the Model, I've not used the in-built export function, as it was poorly predicting the Text, at the later stage. I've attached a Jupyter Notebook which does the job of exporting the Model and uses that model to predict text from some images. Name of the notebook is
+
+
+#- We can test our model using validating.tfrecords, as it will test the output of the images w.r.t ground truth values. Execution can be done using following command.
+
+aocr test ./datasets/validating.tfrecords  --max-width 960 --max-height 48 --max-prediction 23
+
+#- We can also visualize the output of the images by using following command. It will generate '*.gif' files in new directory named '/out' showing how the AOCR is working on those images to predict the values, alongside it will also have the corresponding predicted labels with those '.gif's.
+
+aocr test --visualize ./datasets/validating.tfrecords - --max-width 960 --max-height 48 --max-prediction 23
+
+./my_run.sh TestImageFolderName OutputFileName
+It executes by passing TestImageFolderName and OutputFileName. It might get an error so use "aocr predict --dirpath TestImageFolderName --out_file_name OutputFileName --max-prediction 23 --max-height 48 --max-width 960 "
+
+#- I've included a shell script, which takes 2 arguments as STDIN, 1st one being TEST_DIR and 2nd one FILE_NAME. If shell script results into an error, Above command should help, to acheive required result. Moreover, 'values1.txt' is example of the output of the command execution.
+
+#- WebApp is available in both the version,i.e., Jupyter file as well as python script. It is implemented using Flask.
+
+
+
+For using the webapp simply run python app.py
+and choose image on which you want to inference and upload it . sometime it will take longer to predict but definately it will give the output.
+
+
+
+
+
+
+

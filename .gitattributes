@@ -1,0 +1,5 @@
+exported-model/frozen_graph_5200_lr_0.1.pb filter=lfs diff=lfs merge=lfs -text
+exported-model/frozen_graph_6050_lr_0.4.pb filter=lfs diff=lfs merge=lfs -text
+exported-model/frozen_graph_1k_lr_0.5.pb filter=lfs diff=lfs merge=lfs -text
+* filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
